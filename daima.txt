@@ -1,0 +1,88 @@
+﻿import os 
+from bs4 import BeautifulSoup
+import requests
+import re 
+import urllib 
+from urllib.request import urlopen
+
+url = 'http://www.meishij.net/zuofa/dianfanyanjuji_2.html'
+
+
+import re 
+import urllib 
+from urllib.request import urlopen
+
+
+In [2]:
+
+
+url = 'http://www.meishij.net/zuofa/dianfanyanjuji_2.html'
+
+
+In [3]:
+
+
+def get_html_text(url):
+​
+    '''获取html文本'''
+​
+    try:
+​
+        r = requests.get(url, timeout=3)
+​
+        r.raise_for_status
+​
+        r.encoding = r.apparent_encoding
+​
+        return r.text
+​
+    except:
+​
+        return 'error'
+
+def get_all_link():
+    all_link = []
+    for i in range(1,8):
+        url = 'http://so.meishi.cc/?q=%E7%94%B5%E9%A5%AD%E7%85%B2&page={}'.format(i)
+        html = get_html_text(url)
+        soup = BeautifulSoup(html,'lxml')
+        links = soup.find_all('a',class_ = 'img')
+        for link in links:
+            all_link.append(link.get('href'))
+    return all_link
+
+def get_name(url):
+    html = urlopen(url)
+    soup = BeautifulSoup(html,'lxml')
+    name = soup.find('h1',class_ = 'title').get_text()
+    return name
+
+def creat_folder(name):
+    path = 'D:/dongzhi/' + name
+    if not os.path.isdir(path):
+        os.makedirs(path)
+    return path
+
+def get_pic_link(url):
+    html = urlopen(url)
+    soup = BeautifulSoup(html,'lxml')
+    all_pic  = soup.find_all('img',class_ = 'conimg')
+    pic_link = []
+    for pic in all_pic:
+        pic_link.append(pic.get('src')) 
+    return pic_link
+
+def main():
+    all_link = get_all_link()
+    j = 1
+    for url in all_link:
+        name = get_name(url)
+        path = creat_folder(name)
+        pic_link = get_pic_link(url)
+        x = 0
+        for pic in pic_link:
+            try:
+                urllib.request.urlretrieve(str(pic),filename = r'D:/dongzhi/%s/%s.jpg' % (str(name),x))
+                x += 1
+            except: 
+                continue
