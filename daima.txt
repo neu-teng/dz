@@ -13,13 +13,11 @@ import urllib
 from urllib.request import urlopen
 
 
-In [2]:
 
 
 url = 'http://www.meishij.net/zuofa/dianfanyanjuji_2.html'
 
 
-In [3]:
 
 
 def get_html_text(url):
